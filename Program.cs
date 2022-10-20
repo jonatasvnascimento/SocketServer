@@ -10,24 +10,35 @@ namespace SocketServer
         static void Main(string[] args)
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
+            try
+            {
+                IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1234);
 
-            socket.Bind(endPoint);
-            socket.Listen(5);
+                socket.Bind(endPoint);
+                socket.Listen(5);
 
-            Console.WriteLine("Escutando...");
-            Socket escutar = socket.Accept();
+                Console.WriteLine("Escutando...");
+                Socket escutar = socket.Accept();
 
-            byte[] bytes = new byte[255];
-            int tamanho = escutar.Receive(bytes, 0, bytes.Length, SocketFlags.None);
+                byte[] bytes = new byte[255];
+                int tamanho = escutar.Receive(bytes, 0, bytes.Length, SocketFlags.None);
 
-            Array.Resize(ref bytes, tamanho);
+                Array.Resize(ref bytes, tamanho);
 
-            Console.WriteLine($"Cliente falou: {Encoding.Default.GetString(bytes)}");
+                Console.WriteLine($"Cliente falou: {Encoding.Default.GetString(bytes)}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Não foi possivel conectar ao servidor: {ex}");
+            }
+            finally
+            {
+                //socket.Close();
+            }
 
-            socket.Close();
-            Console.WriteLine("Conexão fechada, precione qualquer tecla para finalizar");
-            Console.ReadKey();
+            //Console.WriteLine("Conexão fechada, precione qualquer tecla para finalizar");
+            //Console.ReadKey();
+
         }
     }
 }
